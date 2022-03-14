@@ -54,31 +54,43 @@ internal struct BottomSheetView<hContent: View, mContent: View, bottomSheetPosit
             }
             VStack(spacing: 0) {
                 if !self.options.notResizeable && !self.options.noDragIndicator {
-                    Button(action: self.switchPositionIndicator, label: {
-                        Capsule()
-                            .fill(self.options.dragIndicatorColor)
-                            .frame(width: 36, height: 5)
-                            .shadow(color: .gray.opacity(0.8), radius: 1.5, y: 1.5)
-                            .padding(.top, 7)
-                            .padding(.bottom, 7)
+                    ZStack {
+                        Button(action: self.closeButton, label: {
+                            Capsule()
+                                .fill(self.options.dragIndicatorColor)
+                                .frame(width: 100, height: 5)
+//                                .shadow(color: .gray.opacity(0.6), radius: 1, y: 1)
+                                .padding(.bottom, 7)
 
-                    })
+
+                        })
+                        HStack(alignment: .top, spacing: 0) {
+
+                            Spacer(minLength: 0)
+                            if self.options.showCloseButton {
+                                Button(action: closeButton) {
+                                    Image(systemName: "xmark.circle")
+                                        .foregroundColor(self.options.dragIndicatorColor)
+//                                        .shadow(color: .gray.opacity(0.6), radius: 1, y: 1)
+                                }
+                                .font(Font.system(size: 20, weight: .semibold, design: .rounded))
+                            }
+                        }
+
+
+                    }
+                    .padding(.trailing, options.cornerRadius / 2 + 2.5)
+                    .padding(.top, 7)
                 }
-                if self.headerContent != nil || self.options.showCloseButton {
+                if self.headerContent != nil {
                     HStack(alignment: .top, spacing: 0) {
                         if self.headerContent != nil {
                             self.headerContent!
                         }
+
+
                         
-                        Spacer(minLength: 0)
-                        
-                        if self.options.showCloseButton {
-                            Button(action: closeButton) {
-                                Image(systemName: "xmark.circle.fill")
-                                    .foregroundColor(Color(UIColor.tertiaryLabel))
-                            }
-                            .font(.title)
-                        }
+
                     }
                     .gesture(
                         DragGesture()
@@ -142,7 +154,7 @@ internal struct BottomSheetView<hContent: View, mContent: View, bottomSheetPosit
                         Color.white.opacity(0.9)
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.height * 0.3)
+                .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.height * bottomSheetPosition.rawValue)
                 
             }
             .edgesIgnoringSafeArea(.bottom)
@@ -151,6 +163,7 @@ internal struct BottomSheetView<hContent: View, mContent: View, bottomSheetPosit
                     .foregroundColor(.white).opacity(0.9)
                     .edgesIgnoringSafeArea(.bottom)
                     .shadow(color: self.options.shadowColor, radius: self.options.shadowRadius, x: self.options.shadowX, y: self.options.shadowY)
+                    .shadow(color: self.options.shadowColor, radius: self.options.shadowRadius, x: -self.options.shadowX, y: -self.options.shadowY)
                     .gesture(
                         DragGesture()
                             .onChanged { value in
@@ -168,8 +181,8 @@ internal struct BottomSheetView<hContent: View, mContent: View, bottomSheetPosit
                             }
                     )
             )
-            .frame(width: geometry.size.width, height: min(max((geometry.size.height * self.bottomSheetPosition.rawValue) - self.translation, 0), geometry.size.height * 1.05), alignment: .top)
-            .offset(y: max(self.isHiddenPosition ? geometry.size.height + geometry.safeAreaInsets.bottom : self.isBottomPosition ? geometry.size.height - (geometry.size.height * self.bottomSheetPosition.rawValue) + self.translation + geometry.safeAreaInsets.bottom : geometry.size.height - (geometry.size.height * self.bottomSheetPosition.rawValue) + self.translation, geometry.size.height * -0.05))
+            .frame(width: geometry.size.width - 5, height: min(max((geometry.size.height * self.bottomSheetPosition.rawValue) - self.translation, 0), geometry.size.height * 1.05), alignment: .top)
+            .offset(x: 2.5, y: max(self.isHiddenPosition ? geometry.size.height + geometry.safeAreaInsets.bottom : self.isBottomPosition ? geometry.size.height - (geometry.size.height * self.bottomSheetPosition.rawValue) + self.translation + geometry.safeAreaInsets.bottom : geometry.size.height - (geometry.size.height * self.bottomSheetPosition.rawValue) + self.translation, geometry.size.height * -0.05))
             .transition(.move(edge: .bottom))
             .animation(self.options.animation)
         }
@@ -190,6 +203,8 @@ internal struct BottomSheetView<hContent: View, mContent: View, bottomSheetPosit
         
         self.closeSheet()
     }
+
+    
     
     private func closeSheet() -> Void {
         if let hidden = bottomSheetPositionEnum(rawValue: 0) {
@@ -262,7 +277,7 @@ internal extension BottomSheetView where hContent == ModifiedContent<ModifiedCon
             self.init(bottomSheetPosition: bottomSheetPosition, options: options, headerContent: { return nil }, mainContent: content)
         } else {
             self.init(bottomSheetPosition: bottomSheetPosition, options: options, headerContent: { return Text(title!)
-                        .font(.title).bold().lineLimit(1).padding(.bottom) as? hContent }, mainContent: content)
+                        .font(.title).bold().padding(.bottom) as? hContent }, mainContent: content)
         }
     }
 }
