@@ -55,15 +55,19 @@ internal struct BottomSheetView<hContent: View, mContent: View, bottomSheetPosit
             VStack(spacing: 0) {
                 if !self.options.notResizeable && !self.options.noDragIndicator {
                     ZStack {
-                        Button(action: self.closeButton, label: {
-                            Capsule()
-                                .fill(self.options.dragIndicatorColor)
-                                .frame(width: 100, height: 5)
-//                                .shadow(color: .gray.opacity(0.6), radius: 1, y: 1)
-                                .padding(.bottom, 7)
+                        VStack {
+                            Spacer()
+                            Button(action: self.closeButton, label: {
+                                Capsule()
+                                    .fill(self.options.dragIndicatorColor)
+                                    .frame(width: 100, height: 3)
+//                                    .padding(.bottom, 7)
+//                                    .offset(y: 10)
 
 
-                        })
+                            })
+                            Spacer()
+                        }
                         HStack(alignment: .top, spacing: 0) {
 
                             Spacer(minLength: 0)
@@ -72,25 +76,21 @@ internal struct BottomSheetView<hContent: View, mContent: View, bottomSheetPosit
                                     Image(systemName: "xmark.circle")
                                         .foregroundColor(self.options.dragIndicatorColor)
 //                                        .shadow(color: .gray.opacity(0.6), radius: 1, y: 1)
-                                }
+                                } .padding(.trailing, options.cornerRadius / 2 + 2.5).offset(y: 5)
                                 .font(Font.system(size: 20, weight: .semibold, design: .rounded))
                             }
                         }
 
 
-                    }
-                    .padding(.trailing, options.cornerRadius / 2 + 2.5)
-                    .padding(.top, 7)
+                    }.frame( height: 25, alignment: .center)
+
+//                    .padding(.top, 7)
                 }
                 if self.headerContent != nil {
                     HStack(alignment: .top, spacing: 0) {
                         if self.headerContent != nil {
                             self.headerContent!
                         }
-
-
-                        
-
                     }
                     .gesture(
                         DragGesture()
