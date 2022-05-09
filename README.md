@@ -29,7 +29,7 @@ There are also many implementations out there that **only have 2 states** - **no
 
 ## Requirements 
 
-- iOS 13
+- iOS 14
 - Swift 5.3
 - Xcode 12
 

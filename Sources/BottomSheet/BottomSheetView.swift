@@ -49,7 +49,7 @@ internal struct BottomSheetView<hContent: View, mContent: View, bottomSheetPosit
                     .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.height * 0.3)
                     .contentShape(Rectangle())
                     .transition(.opacity)
-                    .animation(.linear)
+                    .animation(.linear, value: self.bottomSheetPosition.rawValue)
                     .onTapGesture(perform: self.tapToDismiss)
             }
             VStack(spacing: 0) {
@@ -184,14 +184,20 @@ internal struct BottomSheetView<hContent: View, mContent: View, bottomSheetPosit
             .frame(width: geometry.size.width - 5, height: min(max((geometry.size.height * self.bottomSheetPosition.rawValue) - self.translation, 0), geometry.size.height * 1.05), alignment: .top)
             .offset(x: 2.5, y: max(self.isHiddenPosition ? geometry.size.height + geometry.safeAreaInsets.bottom : self.isBottomPosition ? geometry.size.height - (geometry.size.height * self.bottomSheetPosition.rawValue) + self.translation + geometry.safeAreaInsets.bottom : geometry.size.height - (geometry.size.height * self.bottomSheetPosition.rawValue) + self.translation, geometry.size.height * -0.05))
             .transition(.move(edge: .bottom))
-            .animation(self.options.animation)
+            .animation(self.options.animation, value: self.bottomSheetPosition.rawValue)
         }
     }
     
     private func endEditing() -> Void {
-        UIApplication.shared.windows.filter{$0.isKeyWindow}.first?.endEditing(true)
+        UIApplication.shared.connectedScenes
+            .filter { $0.activationState == .foregroundActive }
+            .map { $0 as? UIWindowScene }
+            .compactMap { $0 }
+            .first?.windows
+            .filter { $0.isKeyWindow }
+            .first?.endEditing(true)
     }
-    
+
     private func tapToDismiss() -> Void {
         if self.options.tapToDismiss {
             self.closeSheet()
