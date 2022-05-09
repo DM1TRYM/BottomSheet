@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.author           = { 'Lucas Zischka' => 'spiele.lucas@gmail.com' }
   s.source           = { :git => 'https://github.com/LucasMucGH/BottomSheet.git', :tag => s.version.to_s }
 
-  s.ios.deployment_target = '13.0'
+  s.ios.deployment_target = '15.0'
   s.swift_version = '5.3'
 
   s.weak_frameworks = 'SwiftUI'
